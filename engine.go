@@ -43,7 +43,7 @@ func Default() *Engine {
 	engine := New()
 
 	engine.Use(Logger(), Recovery())
-
+	engine.NoRoute(defaultNoRouter)
 	return engine
 }
 
@@ -87,7 +87,7 @@ func (e *Engine) route(c *Context) {
 }
 
 func (e *Engine) NoRoute(handlerFunc ...HandlerFunc) {
-	e.noRoute = handlerFunc
+	e.noRoute = e.combineHandlers(handlerFunc)
 }
 
 func (e *Engine) getHandlers(c *Context) HandlersChain {

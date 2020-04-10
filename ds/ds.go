@@ -12,4 +12,8 @@ type Response interface {
 	SetCode(code int)
 	SetBody(data []byte)
 	SetMsg(msg string)
+
+	Code() int
+	Body() []byte
+	Msg() string
 }
