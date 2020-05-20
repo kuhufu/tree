@@ -14,8 +14,8 @@ func Recovery() HandlerFunc {
 		defer func() {
 			err := recover()
 			if err != nil {
-				log.Printf("%s", stack(3))
 				log.Println(err)
+				log.Printf("%s", stack(3))
 				c.AbortWithStatus(500, "Internal Error")
 			}
 		}()

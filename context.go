@@ -92,6 +92,20 @@ func (c *Context) Get(key string) (val interface{}, exist bool) {
 	return val, exist
 }
 
+func (c *Context) GetInt64(key string) (i64 int64) {
+	if val, ok := c.Get(key); ok && val != nil {
+		i64, _ = val.(int64)
+	}
+	return
+}
+
+func (c *Context) GetString(key string) (s string) {
+	if val, ok := c.Get(key); ok && val != nil {
+		s, _ = val.(string)
+	}
+	return
+}
+
 func (c *Context) Set(key string, val interface{}) {
 	if c.keys == nil {
 		c.keys = make(map[string]interface{})
