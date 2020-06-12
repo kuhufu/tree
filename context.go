@@ -2,6 +2,7 @@ package tree
 
 import (
 	"github.com/kuhufu/tree/binding"
+	"github.com/kuhufu/tree/default_value"
 	. "github.com/kuhufu/tree/ds"
 	"log"
 )
@@ -57,6 +58,7 @@ func (c *Context) ShouldBindProtoBuf(obj interface{}) error {
 }
 
 func (c *Context) ShouldBindWith(obj interface{}, b binding.Binding) error {
+	default_value.DefaultValue(obj)
 	return b.Bind(c.Request, obj)
 }
 
