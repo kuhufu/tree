@@ -2,7 +2,7 @@ package result
 
 import (
 	"github.com/kuhufu/tree"
-	"github.com/kuhufu/tree/errs"
+	"github.com/kuhufu/tree/util/errs"
 	"log"
 )
 
