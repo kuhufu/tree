@@ -15,7 +15,7 @@ func (queryBinding) Name() string {
 
 func (queryBinding) Bind(req Request, obj interface{}) error {
 	//
-	//values := extract(req.Path)
+	//values := extract(req.path)
 	//if err := mapForm(obj, values); err != nil {
 	//	return err
 	//}
