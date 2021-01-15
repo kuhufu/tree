@@ -39,31 +39,31 @@ func Fail(c *tree.Context, err error) {
 		msgCode int
 		uid     int64
 		data    interface{}
+		path    = c.Request.Path()
 	)
 
 	if GetCurUserIdFunc != nil {
 		uid = GetCurUserIdFunc(c)
 	}
 
-	switch {
-	case errs.IsErrInternal(err):
-		msgCode = err.(*errs.ErrInternal).Code
-		msg = "内部错误"
-		logMsg = "内部错误"
-	case errs.IsErrParam(err):
-		msgCode = err.(*errs.ErrParam).Code
-		msg = err.Error()
-		logMsg = "参数错误"
-	case errs.IsErrBusiness(err):
-		msgCode = err.(*errs.ErrBusiness).Code
-		msg = err.Error()
-		logMsg = "业务错误"
-	case errs.IsErrCustom(err):
-		msgCode = err.(*errs.ErrCustom).Code
-		msg = err.Error()
-		logMsg = "自定义错误"
-		data = err.(*errs.ErrCustom).Data
-	default:
+	realErr, ok := err.(errs.Errors)
+	if ok {
+		msgCode = realErr.Code()
+		msg = realErr.Error()
+		data = realErr.Data()
+
+		switch realErr.Type() {
+		case errs.TypeInternal:
+			msg = "内部错误"
+			logMsg = "内部错误"
+		case errs.TypeParam:
+			logMsg = "参数错误"
+		case errs.TypeBusiness:
+			logMsg = "业务错误"
+		case errs.TypeCustom:
+			logMsg = "自定义错误"
+		}
+	} else {
 		msgCode = 500
 		msg = "未知错误"
 		logMsg = "未处理的错误"
@@ -72,7 +72,7 @@ func Fail(c *tree.Context, err error) {
 	log.Printf("[error] %v\t uid=%v\t %v\t %v: %v",
 		msgCode,
 		uid,
-		c.Request.Path(),
+		path,
 		logMsg,
 		err,
 	)
