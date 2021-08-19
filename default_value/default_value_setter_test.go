@@ -2,6 +2,7 @@ package default_value
 
 import (
 	"fmt"
+	"github.com/kuhufu/util/pprint"
 	"testing"
 	"time"
 )
@@ -32,4 +33,6 @@ func Test_time(t *testing.T) {
 	}{}
 
 	DefaultValue(&f)
+
+	pprint.Print(f)
 }

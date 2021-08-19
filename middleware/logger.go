@@ -1,12 +1,13 @@
-package tree
+package middleware
 
 import (
+	"github.com/kuhufu/tree"
 	"log"
 	"time"
 )
 
-func Logger() HandlerFunc {
-	return func(c *Context) {
+func Logger() tree.HandlerFunc {
+	return func(c *tree.Context) {
 		begin := time.Now()
 		c.Next()
 		end := time.Now()

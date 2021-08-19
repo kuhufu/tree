@@ -1,7 +1,6 @@
 package ds
 
 type Request interface {
-	Method() string
 	Path() string
 	Body() []byte
 	SetBody(body []byte)

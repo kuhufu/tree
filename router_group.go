@@ -2,13 +2,15 @@ package tree
 
 import "path"
 
+type IRouter interface {
+	Handle(path string, handlerFunc ...HandlerFunc)
+}
+
 type RouterGroup struct {
 	handlers HandlersChain
 	basePath string
 	engine   *Engine
 }
-
-const NoMethod = ""
 
 func (g *RouterGroup) Group(relativePath string, handlers ...HandlerFunc) *RouterGroup {
 	return &RouterGroup{
@@ -24,13 +26,13 @@ func (g *RouterGroup) Use(middleware ...HandlerFunc) *RouterGroup {
 }
 
 func (g *RouterGroup) Handle(path string, handlerFunc ...HandlerFunc) {
-	g.handle(NoMethod, path, handlerFunc)
+	g.handle(path, handlerFunc)
 }
 
-func (g *RouterGroup) handle(httpMethod, relativePath string, handlers HandlersChain) {
+func (g *RouterGroup) handle(relativePath string, handlers HandlersChain) {
 	absolutePath := g.calculateAbsolutePath(relativePath)
 	handlers = g.combineHandlers(handlers)
-	g.engine.addRoute(httpMethod, absolutePath, handlers)
+	g.engine.addRoute(absolutePath, handlers)
 }
 
 func (g *RouterGroup) combineHandlers(handlers HandlersChain) HandlersChain {

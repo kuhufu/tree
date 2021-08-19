@@ -3,6 +3,7 @@ package tree
 import (
 	"fmt"
 	. "github.com/kuhufu/tree/ds"
+	"github.com/kuhufu/tree/middleware"
 	"sync"
 )
 
@@ -19,14 +20,14 @@ var defaultNoRouter = func(c *Context) {
 
 type Engine struct {
 	RouterGroup
-	router  map[Path]map[Method]HandlersChain
+	router  map[Path]HandlersChain
 	noRoute HandlersChain
 	pool    sync.Pool
 }
 
 func New() *Engine {
 	engine := &Engine{
-		router:  map[Path]map[Method]HandlersChain{},
+		router:  map[Path]HandlersChain{},
 		noRoute: HandlersChain{defaultNoRouter},
 		pool: sync.Pool{New: func() interface{} {
 			return &Context{}
@@ -42,21 +43,20 @@ func New() *Engine {
 func Default() *Engine {
 	engine := New()
 
-	engine.Use(Logger(), Recovery())
+	engine.Use(middleware.Logger(), middleware.Recovery())
 	engine.NoRoute(defaultNoRouter)
 	return engine
 }
 
-func (e *Engine) addRoute(method string, path string, handlers []HandlerFunc) {
-	fmt.Printf("[handler] %v %v\n", method, path)
+func (e *Engine) addRoute(path string, handlers []HandlerFunc) {
+	fmt.Printf("[handler] %v\n", path)
 	p := Path(path)
-	m, ok := e.router[p]
-	if !ok {
-		m = make(map[Method]HandlersChain)
-		e.router[p] = m
+	_, ok := e.router[p]
+	if ok {
+		panic("duplicate path: " + path)
 	}
 
-	m[Method(method)] = handlers
+	e.router[p] = handlers
 }
 
 func (e *Engine) Route(request Request, response Response) {
@@ -91,7 +91,7 @@ func (e *Engine) NoRoute(handlerFunc ...HandlerFunc) {
 }
 
 func (e *Engine) getHandlers(c *Context) HandlersChain {
-	handlers, ok := e.router[Path(c.Request.Path())][Method(c.Request.Method())]
+	handlers, ok := e.router[Path(c.Request.Path())]
 	if !ok {
 		return e.noRoute
 	}

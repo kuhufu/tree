@@ -1,16 +1,17 @@
-package tree
+package middleware
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/kuhufu/tree"
 	"io/ioutil"
 	"log"
 	"runtime"
 	"time"
 )
 
-func Recovery() HandlerFunc {
-	return func(c *Context) {
+func Recovery() tree.HandlerFunc {
+	return func(c *tree.Context) {
 		defer func() {
 			err := recover()
 			if err != nil {
